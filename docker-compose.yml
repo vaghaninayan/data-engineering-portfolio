@@ -24,17 +24,23 @@ x-airflow-common: &airflow-common
     AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth'
     AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: "true"
     # Pip packages installed at container start (development convenience)
-    _PIP_ADDITIONAL_REQUIREMENTS: 'apache-airflow-providers-apache-spark==4.11.1 boto3==1.35.49 minio==7.2.10'
+    _PIP_ADDITIONAL_REQUIREMENTS: 'apache-airflow-providers-apache-spark==4.11.1 boto3==1.35.49 minio==7.2.10 docker==7.1.0 psycopg2-binary==2.9.10'
     # MinIO connection (used by DAGs/operators)
     MINIO_ENDPOINT: http://minio:9000
     MINIO_ACCESS_KEY: ${MINIO_ROOT_USER}
     MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
+    POSTGRES_DB: ${POSTGRES_DB}
+    POSTGRES_USER: ${POSTGRES_USER}
+    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
   volumes:
     - ./airflow/dags:/opt/airflow/dags
     - ./airflow/logs:/opt/airflow/logs
     - ./airflow/plugins:/opt/airflow/plugins
+    - /var/run/docker.sock:/var/run/docker.sock:ro
     - ./spark/jobs:/opt/spark/jobs
   user: "${AIRFLOW_UID}:0"
+  group_add:
+    - "${DOCKER_GID}"
   depends_on:
     postgres:
       condition: service_healthy
