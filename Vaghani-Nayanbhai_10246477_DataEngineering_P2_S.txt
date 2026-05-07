@@ -1,33 +1,17 @@
-Phase 2 — Implementation Submission
+Phase 2 - Implementation Submission
 
-Author:           Nayanbhai Vaghani
-Matriculation:    10246477
-Course:           DLMDSEDE02 — Project: Data Engineering
-Task:             Task 1 — Batch processing
-Submission date:  May 2026
+Author: Nayanbhai Vaghani
+Matriculation: 10246477
+Course: DLMDSEDE02 - Data Engineering
+Task: Task 1 (Batch processing)
 
-Repository (public):
+Repository:
 https://github.com/vaghaninayan/data-engineering-portfolio
 
-Summary of deliverables in repo:
-- docker-compose.yml ........ 7-service stack (Postgres, MinIO, Spark master+2
-                              workers, Airflow webserver+scheduler+init,
-                              ingestion image)
-- ingestion/ ................ Python TLC downloader + dim_location loader
-- postgres/init.sql ......... Gold layer star schema
-- spark/jobs/ ............... bronze_to_silver.py, silver_to_gold.py
-- spark/tests/ .............. 22 pytest tests, run via spark/run_tests.sh
-- airflow/dags/ ............. monthly_ingest, quarterly_aggregate DAGs
+Pipeline metrics:
+  Bronze: 12 Parquet files, 334 MB, ~20.7M raw rows
+  Silver: 17.9M cleaned rows, 468 MB Snappy Parquet
+  Gold:   768k hourly aggregates in gold.fact_trips_hourly
+  Tests:  22 / 22 passing
 
-To reproduce:
-    git clone https://github.com/vaghaninayan/data-engineering-portfolio.git
-    cd data-engineering-portfolio
-    cp .env.example .env  # fill in secrets
-    docker compose up -d
-
-Pipeline metrics from the verification run:
-    Bronze:   12 Parquet files, 334 MB, ~20.7M raw rows
-    Silver:   17.9M cleaned + deduplicated rows, 468 MB Snappy Parquet
-    Gold:     768k hourly aggregates in gold.fact_trips_hourly
-    Lineage:  1 row in gold.pipeline_run per Spark job execution
-    Tests:    22 / 22 passing
+Run: docker compose up -d, then trigger DAGs in Airflow UI.
